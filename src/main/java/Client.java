@@ -3,6 +3,7 @@ import java.io.Serializable;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -11,13 +12,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
-public class Client implements IFlightClient , Serializable {
-	public String name;
+public class Client extends UnicastRemoteObject  implements IFlightClient , Serializable {
+	public  String name;
 	public static IFlightServer cstub;
 	public static ClientWindow cw ;
-	private Client(String name) {
+	
+	public Client(String name)  throws RemoteException {
 		this.name = name;
-	};
+	}
 	public static Client client = null;
 	
 	@Override
@@ -57,8 +59,9 @@ public class Client implements IFlightClient , Serializable {
         try {
             Registry registry = LocateRegistry.getRegistry(host);
             client = new Client("lin1");
+            registry.bind("lin1", client);
             cstub = (IFlightServer) registry.lookup("IFlightServer");
-            cstub.login(client.name,client);
+            cstub.login("lin1",client);
             
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());

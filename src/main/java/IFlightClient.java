@@ -4,5 +4,5 @@ import java.util.List;
 
 public interface IFlightClient extends Remote{
 	void receiveListofFlights(List<Flight> flights) throws RemoteException;
-	void receiveUpdatedFlight(Flight flight, boolean deleted);
+	void receiveUpdatedFlight(Flight flight, boolean deleted) throws RemoteException;
 }

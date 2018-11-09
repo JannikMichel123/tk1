@@ -41,7 +41,6 @@ public class Server implements IFlightServer {
 	}
     
     public static void main(String args[]) {
-        
         try {
         	System.setProperty("java.rmi.server.hostname","127.0.0.1");
             Server obj = new Server();
