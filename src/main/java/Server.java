@@ -15,7 +15,7 @@ public class Server implements IFlightServer {
     public static IFlightServer stub;
 
 	@Override
-	public boolean login (String clientName, IFlightClient client) {
+	public boolean login (String clientName, IFlightClient client) throws RemoteException {
 		// TODO Auto-generated method stub
 		name.add("lin");
 		if(!name.contains(clientName)) {

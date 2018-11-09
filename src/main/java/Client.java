@@ -21,24 +21,12 @@ public class Client implements IFlightClient , Serializable {
 	public static Client client = null;
 	
 	@Override
-	public void receiveListofFlights(List<Flight> flights) {
+	public void receiveListofFlights(List<Flight> flights) throws RemoteException {
 		
-		cw = new ClientWindow();
+		cw = new ClientWindow(cstub);
 		cw.Flightinfo = flights;
-		ArrayList<String> items;
-		/*for(Flight flight : flights) {
-			items = new ArrayList<>();
-			items.add(flight.Name);
-			items.add(flight.IATAcode);
-			items.add(flight.Flightnumber);
-			items.add(flight.Departureairport);
-			items.add(flight.ArrivalAirport);
-			items.add(flight.ATernimal);
-			cw.Flightinfo.add(items);
-		}
-		System.out.println(cw.Flightinfo.size());*/
 		Object[][] obj = new Object[cw.Flightinfo.size()][6];
-		int i = 0 , j = 0;
+		int i = 0 ;
 		for(i=0;i<cw.Flightinfo.size();i++) {
 				obj[i] = cw.Flightinfo.get(i).toArray();
 		}		
@@ -53,7 +41,6 @@ public class Client implements IFlightClient , Serializable {
 	public void receiveUpdatedFlight(Flight flight, boolean deleted) {
 		// TODO Auto-generated method stub
 	   cw.Flightinfo.remove(flight);
-
 		cw.updateWindow();
 		try {
 			
@@ -65,7 +52,7 @@ public class Client implements IFlightClient , Serializable {
 	
 	public static void main(String[] args) {
 		String host = (args.length < 1) ? null : args[0];
-
+		
 
         try {
             Registry registry = LocateRegistry.getRegistry(host);
