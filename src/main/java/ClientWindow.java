@@ -14,7 +14,7 @@ public class ClientWindow extends JFrame{
 			this.fs = fs;
 		}
 		public void actionPerformed(ActionEvent ae) {
-
+			
 				try {
 					this.fs.logout("lin1");
 				} catch (RemoteException e) {

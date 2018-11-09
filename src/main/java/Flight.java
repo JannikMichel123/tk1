@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.lang.reflect.Array;
 
-public class Flight {
+public class Flight implements Serializable{
 	String IATAcode = null;
 	String Name = null;
 	String Modelname = null;
