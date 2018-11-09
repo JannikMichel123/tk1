@@ -2,3 +2,7 @@
 /Hello.class
 /HelloWorldMain.class
 /Server.class
+/ClientWindow.class
+/IFlightServer.class
+/IFlightClient.class
+/Flight.class
