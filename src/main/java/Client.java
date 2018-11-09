@@ -57,6 +57,7 @@ public class Client implements IFlightClient , Serializable {
         try {
             Registry registry = LocateRegistry.getRegistry(host);
             client = new Client("lin1");
+            registry.bind("lin1", client);
             cstub = (IFlightServer) registry.lookup("IFlightServer");
             cstub.login(client.name,client);
             
