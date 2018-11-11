@@ -4,7 +4,7 @@ import java.rmi.RemoteException;
 	public interface IFlightServer extends Remote {
 	    boolean login (String clientName, IFlightClient client) throws RemoteException;
 	    void logout(String clientName) throws RemoteException;
-//	    void updataFlight(String clientName, Flight flight);
-//	    void deleteFlight(String clientName, Flight flight);
+	    void updataFlight(String clientName, Flight flight) throws RemoteException;
+	    void deleteFlight(String clientName, Flight flight)throws RemoteException;
 	}
 
