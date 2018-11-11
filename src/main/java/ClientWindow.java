@@ -1,76 +1,18 @@
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;import java.util.List;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 public class ClientWindow extends JFrame{
-	
-	
-	public class NewActionListener implements ActionListener{
-		IFlightServer fs;
-		public NewActionListener(IFlightServer fs ){
-			this.fs = fs;
-		}
-		public void actionPerformed(ActionEvent ae) {
-			//open the edit window but without the values.
-			try {
-				
-				EditDialog dialog = new EditDialog(new Flight(),fs);
-				dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				dialog.setVisible(true);
-				
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}	
-	
-	public class EditActionListener implements ActionListener{
-		IFlightServer fs;
-		ClientWindow cw;
-		public List<Flight> Flightinfo;
-		public EditActionListener(IFlightServer fs,ClientWindow cw ){
-			this.fs = fs;
-			this.cw = cw;
-			
-		}
-		public void actionPerformed(ActionEvent ae) {
-			//Open an new window.
-			try {
-				//Flight v = (Flight)cw.model.getDataVector().elementAt(cw.table.getSelectedRow());
-				
-				EditDialog dialog = new EditDialog(cw.Flightinfo.get(cw.table.getSelectedRow()),fs);
-				dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
-				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-				dialog.setVisible(true);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}	
-		}
-	}	
-	
-	public class DeleteActionListener implements ActionListener{
-		IFlightServer fs;
-		ClientWindow cw;
-		public DeleteActionListener(IFlightServer fs,ClientWindow cw  ){
-			this.fs = fs;
-			this.cw = cw;
-		}
-		public void actionPerformed(ActionEvent ae) {
-			//call Server to delete the selected item
-			int selectedRow = cw.table.getSelectedRow();
-			if(selectedRow != -1) {
-				cw.Flightinfo.remove(selectedRow);
-				cw.updateWindow();
-			}
-		}
-	}
-	
 	
 	public DefaultTableModel model = null;
 	public JTable table = null;
@@ -106,6 +48,25 @@ public class ClientWindow extends JFrame{
 		setSize(800,480);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.addWindowListener(new WindowAdapter(){
+            public void windowClosing(WindowEvent e){
+               
+            		try {
+            			 Registry registry = LocateRegistry.getRegistry(null);
+            			 try {
+							registry.unbind(Client.name);
+						} catch (NotBoundException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						Client.cstub.logout(Client.name);
+					} catch (RemoteException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
+                    System.exit(0);
+            }   
+        });
 	}
 	void updateWindow() {
 		Object[][] obj = new Object[this.Flightinfo.size()][6];
@@ -119,5 +80,74 @@ public class ClientWindow extends JFrame{
 		this.table.setModel(model);
 		this.repaint();
 		this.setVisible(true);
+	}
+	
+	public class NewActionListener implements ActionListener{
+		IFlightServer fs;
+		public NewActionListener(IFlightServer fs ){
+			this.fs = fs;
+		}
+		public void actionPerformed(ActionEvent ae) {
+			//open the edit window but without the values.
+			try {
+				
+				EditDialog dialog = new EditDialog(new Flight(),fs);
+				dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}	
+	
+	public class EditActionListener implements ActionListener{
+		IFlightServer fs;
+		ClientWindow cw;
+		public List<Flight> Flightinfo;
+		public EditActionListener(IFlightServer fs,ClientWindow cw ){
+			this.fs = fs;
+			this.cw = cw;
+			
+		}
+		public void actionPerformed(ActionEvent ae) {
+			//Open an new window.
+			try {
+				//Flight v = (Flight)cw.model.getDataVector().elementAt(cw.table.getSelectedRow());
+				int selectedRow = cw.table.getSelectedRow();
+				if(selectedRow != -1) {
+				EditDialog dialog = new EditDialog(cw.Flightinfo.get(selectedRow),fs);
+				dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
+				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
+				dialog.setVisible(true);
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}	
+		}
+	}	
+	
+	public class DeleteActionListener implements ActionListener{
+		IFlightServer fs;
+		ClientWindow cw;
+		public DeleteActionListener(IFlightServer fs,ClientWindow cw  ){
+			this.fs = fs;
+			this.cw = cw;
+		}
+		public void actionPerformed(ActionEvent ae) {
+			//call Server to delete the selected item
+			int selectedRow = cw.table.getSelectedRow();
+			if(selectedRow != -1) {
+				//cw.Flightinfo.remove(selectedRow);
+				try {
+					fs.deleteFlight("eia", cw.Flightinfo.get(selectedRow));
+				} catch (RemoteException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				cw.updateWindow();
+			}
+		}
 	}
 }

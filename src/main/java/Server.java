@@ -7,25 +7,27 @@ import java.util.List;
         
 public class Server implements IFlightServer {
 	
-	private List<String> name= new ArrayList<String>();
-	private List<IFlightClient> clients= new ArrayList<IFlightClient>();
+	private List<ClientHelper> clients= new ArrayList<ClientHelper>();
     public List<Flight> Flightlist = new ArrayList<Flight>();
     public Server() {}
-    public  Flight flight1 = new Flight("LH","Lufthansa","382","541","TK","FRA","1");
-    public  Flight flight2 = new Flight("LH","Lufthansa","381","542","FRA","FRA","2");
     public static IFlightServer stub;
 
+    public class ClientHelper{
+    	IFlightClient stub;
+    	String name;
+    	public ClientHelper(IFlightClient stub,String name) {
+    		this.stub = stub;
+    		this.name = name;
+    	}
+    	
+    }
 	@Override
 	public boolean login (String clientName, IFlightClient client) throws RemoteException {
 		// TODO Auto-generated method stub
-		name.add("lin");
-		clients.add(client);
-		if(!name.contains(clientName)) {
-			name.add(clientName);
-			Flightlist.add(flight2);
-			Flightlist.add(flight1);
+		if(!clients.stream().filter(c->c.name.equals(clientName)).findFirst().isPresent()) {
+			System.out.println("Suceed");
+			clients.add(new ClientHelper(client,clientName));
 			client.receiveListofFlights(Flightlist);
-			client.receiveUpdatedFlight(flight1, true);
 			return true;
 		}
 		else {
@@ -38,7 +40,12 @@ public class Server implements IFlightServer {
 
 	@Override
 	public void logout(String clientName) {
-		// TODO Auto-generated method stub
+		//delete client from list and delete stub
+		for(int i = 0;i<clients.size();i++) {
+			if(clients.get(i).name.equals(clientName)) {
+				clients.remove(i);
+			}
+		}
 		System.out.println("You have logged out");
 	}
     
@@ -62,16 +69,18 @@ public class Server implements IFlightServer {
 	public void updataFlight(String clientName, Flight flight) throws RemoteException {
 		// TODO Auto-generated method stub
 		Flightlist.add(flight);
-		for(IFlightClient c : clients) {
-			c.receiveUpdatedFlight(flight, false);
+		for(ClientHelper ch : clients) {
+			ch.stub.receiveUpdatedFlight(flight, false);
 		}
-		
 	}
 
 	@Override
-	public void deleteFlight(String clientName, Flight flight) {
+	public void deleteFlight(String clientName, Flight flight) throws RemoteException {
 		// TODO Auto-generated method stub
-		
+		for(ClientHelper ch : clients) {
+			
+			ch.stub.receiveUpdatedFlight(flight, true);
+		}
 	}
 
 

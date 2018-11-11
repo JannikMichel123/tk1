@@ -13,7 +13,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 public class Client extends UnicastRemoteObject  implements IFlightClient , Serializable {
-	public  String name;
+	public static  String name;
 	public static IFlightServer cstub;
 	public static ClientWindow cw ;
 	
@@ -51,12 +51,12 @@ public class Client extends UnicastRemoteObject  implements IFlightClient , Seri
 	
 	public static void main(String[] args) throws RemoteException {
 		String host = (args.length < 1) ? null : args[0];
-
+		name = "ok1";
 
         try {
             Registry registry = LocateRegistry.getRegistry(host);
-            client = new Client("lin1");
-            registry.bind("lin1", client);
+            client = new Client(name);
+            registry.bind(name, client);
             cstub = (IFlightServer) registry.lookup("IFlightServer");
             
             
@@ -75,7 +75,7 @@ public class Client extends UnicastRemoteObject  implements IFlightClient , Seri
 		cw.table = new JTable(cw.model);
 		cw.add(new JScrollPane(cw.table),BorderLayout.NORTH);
 		cw.setVisible(true);
-		cstub.login("lin1",client);
+		cstub.login(name,client);
 	}
 
 }
