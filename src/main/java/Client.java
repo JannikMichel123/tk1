@@ -24,25 +24,22 @@ public class Client extends UnicastRemoteObject  implements IFlightClient , Seri
 	
 	@Override
 	public void receiveListofFlights(List<Flight> flights) throws RemoteException {
-		
-		cw = new ClientWindow(cstub);
 		cw.Flightinfo = flights;
-		Object[][] obj = new Object[cw.Flightinfo.size()][6];
-		int i = 0 ;
-		for(i=0;i<cw.Flightinfo.size();i++) {
-				obj[i] = cw.Flightinfo.get(i).toArray();
-		}		
-		cw.model = new DefaultTableModel(obj,cw.titles);
-		cw.table = new JTable(cw.model);
-		cw.add(new JScrollPane(cw.table),BorderLayout.NORTH);
-		cw.setVisible(true);
+		cw.updateWindow();
 		System.out.println("ojbk");	
 	}
 	
 	@Override
 	public void receiveUpdatedFlight(Flight flight, boolean deleted) {
 		// TODO Auto-generated method stub
-	   cw.Flightinfo.remove(flight);
+	    for(int i = 0; i<cw.Flightinfo.size();i++) {
+	    	if(cw.Flightinfo.get(i).Flightnumber.equals(flight.Flightnumber)) {
+	    		cw.Flightinfo.remove(i);
+	    	}
+	    }
+	    if(!deleted) {
+	    	cw.Flightinfo.add(flight);
+	    }
 		cw.updateWindow();
 		try {
 			
@@ -52,21 +49,33 @@ public class Client extends UnicastRemoteObject  implements IFlightClient , Seri
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws RemoteException {
 		String host = (args.length < 1) ? null : args[0];
-		
+
 
         try {
             Registry registry = LocateRegistry.getRegistry(host);
             client = new Client("lin1");
             registry.bind("lin1", client);
             cstub = (IFlightServer) registry.lookup("IFlightServer");
-            cstub.login("lin1",client);
+            
             
         } catch (Exception e) {
             System.err.println("Client exception: " + e.toString());
             e.printStackTrace();
         }
+		cw = new ClientWindow(cstub);
+		//cw.Flightinfo = flights;
+		Object[][] obj = new Object[cw.Flightinfo.size()][6];
+		int i = 0 ;
+		for(i=0;i<cw.Flightinfo.size();i++) {
+				obj[i] = cw.Flightinfo.get(i).toArray();
+		}		
+		cw.model = new DefaultTableModel(obj,cw.titles);
+		cw.table = new JTable(cw.model);
+		cw.add(new JScrollPane(cw.table),BorderLayout.NORTH);
+		cw.setVisible(true);
+		cstub.login("lin1",client);
 	}
 
 }

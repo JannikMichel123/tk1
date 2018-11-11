@@ -8,6 +8,7 @@ import java.util.List;
 public class Server implements IFlightServer {
 	
 	private List<String> name= new ArrayList<String>();
+	private List<IFlightClient> clients= new ArrayList<IFlightClient>();
     public List<Flight> Flightlist = new ArrayList<Flight>();
     public Server() {}
     public  Flight flight1 = new Flight("LH","Lufthansa","382","541","TK","FRA","1");
@@ -18,6 +19,7 @@ public class Server implements IFlightServer {
 	public boolean login (String clientName, IFlightClient client) throws RemoteException {
 		// TODO Auto-generated method stub
 		name.add("lin");
+		clients.add(client);
 		if(!name.contains(clientName)) {
 			name.add(clientName);
 			Flightlist.add(flight2);
@@ -55,6 +57,22 @@ public class Server implements IFlightServer {
             e.printStackTrace();
         }
     }
+
+	@Override
+	public void updataFlight(String clientName, Flight flight) throws RemoteException {
+		// TODO Auto-generated method stub
+		Flightlist.add(flight);
+		for(IFlightClient c : clients) {
+			c.receiveUpdatedFlight(flight, false);
+		}
+		
+	}
+
+	@Override
+	public void deleteFlight(String clientName, Flight flight) {
+		// TODO Auto-generated method stub
+		
+	}
 
 
 
