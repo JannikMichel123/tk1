@@ -11,6 +11,7 @@ import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.awt.event.ActionEvent;
+import javax.swing.JComboBox;
 
 public class EditDialog extends JDialog {
 
@@ -253,7 +254,22 @@ public class EditDialog extends JDialog {
 		textField_16.setText(flight.Agate);
 		textField_17.setText(flight.AEstimateddatetime);
 		textField_18.setText(flight.EndCheckindateandtime);
-		
+		String[] flightStatus = { "B", "D", "I", "L", "M","S","X" };
+		JComboBox comboBox = new JComboBox(flightStatus);
+		if(flight.FlightStatus != null) {
+			comboBox.setSelectedItem(flight.FlightStatus);
+		}
+		comboBox.setBounds(127, 338, 503, 27);
+		contentPanel.add(comboBox);
+//		'B' = Arrival by bus at Concourse B
+//				o 'D' = Diverted
+//				o 'I' = Undefined late arrival or
+//				departure
+//				o 'L' = Aborted departure
+//				o 'M' = Flight delayed until tomorrow
+//				o 'S' = Definitively canceled flight
+//				o 'X' = Canceled flight for which there
+//				may be a replacement o 'Y' = Return to stand
 		{
 			JPanel buttonPane = new JPanel();
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
@@ -268,7 +284,7 @@ public class EditDialog extends JDialog {
 							textField_15.getText(),textField_4.getText(),textField_14.getText(),textField_16.getText(),
 							textField_17.getText(),textField_5.getText(),textField_6.getText(),textField_7.getText(),
 							textField_8.getText(),textField_9.getText(),textField_10.getText(),textField_11.getText(),
-							textField_18.getText()));
+							textField_18.getText(),(String)comboBox.getSelectedItem()));
 				} catch (RemoteException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();

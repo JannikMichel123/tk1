@@ -38,7 +38,7 @@ public class Flight implements Serializable{
 			String arrivalAirport, String aTernimal, String origindate, String aScheduleddatetime, String agate,
 			String aEstimateddatetime, String dScheduleddatetime, String dTernimal, String dgate,
 			String dEstimateddatetime, String checkinlocation, String checkincouter, String checkindateandtime,
-			String endCheckindateandtime) {
+			String endCheckindateandtime,String flightStatus) {
 		super();
 		IATAcode = iATAcode;
 		Name = name;
@@ -61,6 +61,7 @@ public class Flight implements Serializable{
 		//Flightstatus = flightstatus;
 		//FlightStatus = flightStatus2;
 		EndCheckindateandtime = endCheckindateandtime;
+		this.FlightStatus = flightStatus;
 	}
 
 	public Flight() {}
