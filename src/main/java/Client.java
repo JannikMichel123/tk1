@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
@@ -51,12 +54,25 @@ public class Client extends UnicastRemoteObject  implements IFlightClient , Seri
 	
 	public static void main(String[] args) throws RemoteException {
 		String host = (args.length < 1) ? null : args[0];
-		name = "ok1";
-
+//		try {
+//			LoginDialog dialog = new LoginDialog();
+//			dialog.setDefaultCloseOperation(JDialog.EXIT_ON_CLOSE);
+//			dialog.setVisible(true);
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+	    JFrame frame = new JFrame("InputDialog Example #2");
+	    name = JOptionPane.showInputDialog(
+	        frame, 
+	        "Enter your User Name"
+	    );
+	    if(name==null || name.equals("")) {
+	    	System.exit(0);
+	    }
         try {
             Registry registry = LocateRegistry.getRegistry(host);
             client = new Client(name);
-            registry.bind(name, client);
+//            registry.bind(name, client);
             cstub = (IFlightServer) registry.lookup("IFlightServer");
             
             
@@ -75,7 +91,8 @@ public class Client extends UnicastRemoteObject  implements IFlightClient , Seri
 		cw.table = new JTable(cw.model);
 		cw.add(new JScrollPane(cw.table),BorderLayout.NORTH);
 		cw.setVisible(true);
-		cstub.login(name,client);
+		if(!cstub.login(name,client)) {System.exit(1);}
+		
 	}
 
 }

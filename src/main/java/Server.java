@@ -1,5 +1,6 @@
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
+import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
@@ -26,6 +27,13 @@ public class Server implements IFlightServer {
 		// TODO Auto-generated method stub
 		if(!clients.stream().filter(c->c.name.equals(clientName)).findFirst().isPresent()) {
 			System.out.println("Suceed");
+			Registry registry = LocateRegistry.getRegistry(null);
+			try {
+				registry.bind(clientName, client);
+			} catch (AlreadyBoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			clients.add(new ClientHelper(client,clientName));
 			client.receiveListofFlights(Flightlist);
 			return true;
