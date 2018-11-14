@@ -76,6 +76,11 @@ public class Server implements IFlightServer {
 	@Override
 	public void updataFlight(String clientName, Flight flight) throws RemoteException {
 		// TODO Auto-generated method stub
+	    for(int i = 0; i<Flightlist.size();i++) {
+	    	if(Flightlist.get(i).Flightnumber.equals(flight.Flightnumber)) {
+	    		Flightlist.remove(i);
+	    	}
+	    }
 		Flightlist.add(flight);
 		for(ClientHelper ch : clients) {
 			ch.stub.receiveUpdatedFlight(flight, false);

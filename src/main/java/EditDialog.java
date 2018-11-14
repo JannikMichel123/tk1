@@ -4,9 +4,11 @@ import java.awt.FlowLayout;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
@@ -52,7 +54,7 @@ public class EditDialog extends JDialog {
 	/**
 	 * Create the dialog.
 	 */
-	public EditDialog(Flight flight,IFlightServer fs) {
+	public EditDialog(Flight flight,IFlightServer fs,boolean isEditMode) {
 		setBounds(100, 100, 800,480);
 		getContentPane().setLayout(new BorderLayout());
 		contentPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -113,7 +115,7 @@ public class EditDialog extends JDialog {
 		
 		textField = new JTextField();
 		textField.setBounds(127, 1, 186, 26);
-		textField.setText(flight.IATAcode);
+		
 		contentPanel.add(textField);
 		textField.setColumns(10);
 		
@@ -126,7 +128,6 @@ public class EditDialog extends JDialog {
 		textField_2 = new JTextField();
 		textField_2.setColumns(10);
 		textField_2.setBounds(127, 57, 186, 26);
-		textField_2.setText(flight.Flightnumber);
 		contentPanel.add(textField_2);
 
 		textField_3 = new JTextField();
@@ -237,7 +238,12 @@ public class EditDialog extends JDialog {
 		textField_18.setColumns(10);
 		textField_18.setBounds(500, 309, 130, 26);
 		contentPanel.add(textField_18);
-		
+		if(isEditMode) {
+			textField.setEditable(false);
+			textField_2.setEditable(false);
+		}
+		textField.setText(flight.IATAcode);
+		textField_2.setText(flight.Flightnumber);
 		textField_3.setText(flight.Departureairport);
 		textField_4.setText(flight.Origindate);
 		textField_5.setText(flight.DScheduleddatetime);
@@ -254,8 +260,11 @@ public class EditDialog extends JDialog {
 		textField_16.setText(flight.Agate);
 		textField_17.setText(flight.AEstimateddatetime);
 		textField_18.setText(flight.EndCheckindateandtime);
-		String[] flightStatus = { "B", "D", "I", "L", "M","S","X" };
+		String[] flightStatus = { "","B", "D", "I", "L", "M","S","X" };
 		JComboBox comboBox = new JComboBox(flightStatus);
+		if(!isEditMode) {
+			comboBox.setSelectedItem("");
+		}
 		if(flight.FlightStatus != null) {
 			comboBox.setSelectedItem(flight.FlightStatus);
 		}
@@ -275,16 +284,24 @@ public class EditDialog extends JDialog {
 			buttonPane.setLayout(new FlowLayout(FlowLayout.RIGHT));
 			getContentPane().add(buttonPane, BorderLayout.SOUTH);
 			
-			JButton btnNewButton = new JButton("New button");
+			JButton btnNewButton = new JButton("Save");
 			btnNewButton.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
 				try {
-					fs.updataFlight("lin1", new Flight(textField.getText(),textField_12.getText(),
+					if(textField.getText().equals("") ||
+					textField_2.getText().equals("")) {
+						JFrame frame = new JFrame("InputDialog Example #2");
+					    JOptionPane.showMessageDialog(frame, "IATA Code and Flightnumber cannot be empty", "Warning",JOptionPane.INFORMATION_MESSAGE);
+					}else {
+					fs.updataFlight(Client.name, new Flight(textField.getText(),textField_12.getText(),
 							textField_1.getText(),textField_2.getText(),textField_3.getText(),textField_13.getText(),
 							textField_15.getText(),textField_4.getText(),textField_14.getText(),textField_16.getText(),
 							textField_17.getText(),textField_5.getText(),textField_6.getText(),textField_7.getText(),
 							textField_8.getText(),textField_9.getText(),textField_10.getText(),textField_11.getText(),
 							textField_18.getText(),(String)comboBox.getSelectedItem()));
+					setVisible(false);	
+					dispose();
+					}
 				} catch (RemoteException e1) {
 					// TODO Auto-generated catch block
 					e1.printStackTrace();
@@ -295,6 +312,12 @@ public class EditDialog extends JDialog {
 			{
 				JButton cancelButton = new JButton("Cancel");
 				cancelButton.setActionCommand("Cancel");
+				cancelButton.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent e) {
+					setVisible(false);	
+					dispose();
+					}
+					});
 				buttonPane.add(cancelButton);
 			}
 		}

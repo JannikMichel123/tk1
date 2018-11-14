@@ -91,7 +91,7 @@ public class ClientWindow extends JFrame{
 			//open the edit window but without the values.
 			try {
 				
-				EditDialog dialog = new EditDialog(new Flight(),fs);
+				EditDialog dialog = new EditDialog(new Flight(),fs,false);
 				dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				dialog.setVisible(true);
@@ -117,7 +117,7 @@ public class ClientWindow extends JFrame{
 				//Flight v = (Flight)cw.model.getDataVector().elementAt(cw.table.getSelectedRow());
 				int selectedRow = cw.table.getSelectedRow();
 				if(selectedRow != -1) {
-				EditDialog dialog = new EditDialog(cw.Flightinfo.get(selectedRow),fs);
+				EditDialog dialog = new EditDialog(cw.Flightinfo.get(selectedRow),fs,true);
 				dialog.setModalityType(Dialog.ModalityType.APPLICATION_MODAL);
 				dialog.setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 				dialog.setVisible(true);
